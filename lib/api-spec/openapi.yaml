@@ -1,36 +1,1395 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
-  title: Api
-  version: 0.1.0
-  description: API specification
+  title: api
+  version: 1.0.0
+  description: Shawrome Car Sales Platform API
+
 servers:
   - url: /api
-    description: Base API path
-tags:
-  - name: health
-    description: Health operations
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ──────────────────────────── Auth ────────────────────────────
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [accessToken, refreshToken, user]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    RefreshRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    RefreshResponse:
+      type: object
+      required: [accessToken]
+      properties:
+        accessToken:
+          type: string
+
+    ClientRegisterRequest:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        password:
+          type: string
+
+    # ──────────────────────────── User ────────────────────────────
+    UserRole:
+      type: string
+      enum: [admin, seller, client]
+
+    User:
+      type: object
+      required: [id, name, email, role, active, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+          nullable: true
+        role:
+          $ref: '#/components/schemas/UserRole'
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateUserRequest:
+      type: object
+      required: [name, email, password, role]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        role:
+          $ref: '#/components/schemas/UserRole'
+        phone:
+          type: string
+
+    UpdateUserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+
+    UsersListResponse:
+      type: object
+      required: [users, total]
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+        total:
+          type: integer
+
+    SellerStats:
+      type: object
+      required: [userId, userName, totalSales, totalRevenue, totalProfit, carsManaged, priceDrops]
+      properties:
+        userId:
+          type: integer
+        userName:
+          type: string
+        totalSales:
+          type: integer
+        totalRevenue:
+          type: number
+        totalProfit:
+          type: number
+        carsManaged:
+          type: integer
+        priceDrops:
+          type: integer
+
+    # ──────────────────────────── Car ────────────────────────────
+    CarStatus:
+      type: string
+      enum: [available, reserved, sold]
+
+    CarFuel:
+      type: string
+      enum: [essence, diesel, hybride, electrique, gpl]
+
+    CarTransmission:
+      type: string
+      enum: [manuelle, automatique]
+
+    CarCondition:
+      type: string
+      enum: [neuf, occasion]
+
+    Car:
+      type: object
+      required: [id, brand, model, year, mileage, purchasePrice, sellingPrice, fuel, transmission, color, condition, status, photos, sellerId, sellerName, createdAt]
+      properties:
+        id:
+          type: integer
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        mileage:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        purchasePrice:
+          type: number
+        sellingPrice:
+          type: number
+        fuel:
+          $ref: '#/components/schemas/CarFuel'
+        transmission:
+          $ref: '#/components/schemas/CarTransmission'
+        color:
+          type: string
+        condition:
+          $ref: '#/components/schemas/CarCondition'
+        status:
+          $ref: '#/components/schemas/CarStatus'
+        photos:
+          type: array
+          items:
+            type: string
+        sellerId:
+          type: integer
+        sellerName:
+          type: string
+        soldAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+
+    CreateCarRequest:
+      type: object
+      required: [brand, model, year, mileage, purchasePrice, sellingPrice, fuel, transmission, color, condition]
+      properties:
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        mileage:
+          type: integer
+        description:
+          type: string
+        purchasePrice:
+          type: number
+        sellingPrice:
+          type: number
+        fuel:
+          $ref: '#/components/schemas/CarFuel'
+        transmission:
+          $ref: '#/components/schemas/CarTransmission'
+        color:
+          type: string
+        condition:
+          $ref: '#/components/schemas/CarCondition'
+        sellerId:
+          type: integer
+
+    UpdateCarRequest:
+      type: object
+      properties:
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        mileage:
+          type: integer
+        description:
+          type: string
+        purchasePrice:
+          type: number
+        sellingPrice:
+          type: number
+        fuel:
+          $ref: '#/components/schemas/CarFuel'
+        transmission:
+          $ref: '#/components/schemas/CarTransmission'
+        color:
+          type: string
+        condition:
+          $ref: '#/components/schemas/CarCondition'
+        sellerId:
+          type: integer
+
+    UpdateCarStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          $ref: '#/components/schemas/CarStatus'
+
+    UpdateCarPriceRequest:
+      type: object
+      required: [sellingPrice]
+      properties:
+        sellingPrice:
+          type: number
+
+    UploadPhotosResponse:
+      type: object
+      required: [photos]
+      properties:
+        photos:
+          type: array
+          items:
+            type: string
+
+    CarsListResponse:
+      type: object
+      required: [cars, total, page, limit]
+      properties:
+        cars:
+          type: array
+          items:
+            $ref: '#/components/schemas/Car'
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    # ──────────────────────────── Price History ────────────────────────────
+    PriceHistory:
+      type: object
+      required: [id, carId, carBrand, carModel, oldPrice, newPrice, modifiedBy, modifiedByName, createdAt]
+      properties:
+        id:
+          type: integer
+        carId:
+          type: integer
+        carBrand:
+          type: string
+        carModel:
+          type: string
+        oldPrice:
+          type: number
+        newPrice:
+          type: number
+        modifiedBy:
+          type: integer
+        modifiedByName:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+    PriceHistoryListResponse:
+      type: object
+      required: [history, total]
+      properties:
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/PriceHistory'
+        total:
+          type: integer
+
+    # ──────────────────────────── Sales ────────────────────────────
+    Sale:
+      type: object
+      required: [id, carId, carBrand, carModel, carYear, finalPrice, purchasePrice, profit, profitPercent, sellerId, sellerName, soldAt]
+      properties:
+        id:
+          type: integer
+        carId:
+          type: integer
+        carBrand:
+          type: string
+        carModel:
+          type: string
+        carYear:
+          type: integer
+        finalPrice:
+          type: number
+        purchasePrice:
+          type: number
+        profit:
+          type: number
+        profitPercent:
+          type: number
+        sellerId:
+          type: integer
+        sellerName:
+          type: string
+        soldAt:
+          type: string
+          format: date-time
+
+    SalesListResponse:
+      type: object
+      required: [sales, total]
+      properties:
+        sales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sale'
+        total:
+          type: integer
+
+    SalePeriod:
+      type: string
+      enum: [day, week, month, year]
+
+    SaleStats:
+      type: object
+      required: [period, totalSales, totalRevenue, totalProfit, totalPurchaseCost, profitPercent, chartData]
+      properties:
+        period:
+          $ref: '#/components/schemas/SalePeriod'
+        totalSales:
+          type: integer
+        totalRevenue:
+          type: number
+        totalProfit:
+          type: number
+        totalPurchaseCost:
+          type: number
+        profitPercent:
+          type: number
+        chartData:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChartDataPoint'
+
+    ChartDataPoint:
+      type: object
+      required: [label, revenue, profit, sales]
+      properties:
+        label:
+          type: string
+        revenue:
+          type: number
+        profit:
+          type: number
+        sales:
+          type: integer
+
+    TopCar:
+      type: object
+      required: [carId, brand, model, year, salesCount, totalRevenue, totalProfit]
+      properties:
+        carId:
+          type: integer
+        brand:
+          type: string
+        model:
+          type: string
+        year:
+          type: integer
+        salesCount:
+          type: integer
+        totalRevenue:
+          type: number
+        totalProfit:
+          type: number
+
+    # ──────────────────────────── Dashboard ────────────────────────────
+    AdminDashboard:
+      type: object
+      required: [totalCars, availableCars, reservedCars, soldCars, todayStats, weekStats, monthStats, yearStats, recentSales, topSellers]
+      properties:
+        totalCars:
+          type: integer
+        availableCars:
+          type: integer
+        reservedCars:
+          type: integer
+        soldCars:
+          type: integer
+        todayStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        weekStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        monthStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        yearStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        recentSales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sale'
+        topSellers:
+          type: array
+          items:
+            $ref: '#/components/schemas/SellerStats'
+
+    SellerDashboard:
+      type: object
+      required: [myCars, availableCars, soldCars, reservedCars, todayStats, weekStats, monthStats, recentSales]
+      properties:
+        myCars:
+          type: integer
+        availableCars:
+          type: integer
+        soldCars:
+          type: integer
+        reservedCars:
+          type: integer
+        todayStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        weekStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        monthStats:
+          $ref: '#/components/schemas/PeriodSummary'
+        recentSales:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sale'
+
+    PeriodSummary:
+      type: object
+      required: [sales, revenue, profit, profitPercent]
+      properties:
+        sales:
+          type: integer
+        revenue:
+          type: number
+        profit:
+          type: number
+        profitPercent:
+          type: number
+
+    # ──────────────────────────── Favorites ────────────────────────────
+    Favorite:
+      type: object
+      required: [id, carId, car, createdAt]
+      properties:
+        id:
+          type: integer
+        carId:
+          type: integer
+        car:
+          $ref: '#/components/schemas/Car'
+        createdAt:
+          type: string
+          format: date-time
+
+    FavoritesListResponse:
+      type: object
+      required: [favorites]
+      properties:
+        favorites:
+          type: array
+          items:
+            $ref: '#/components/schemas/Favorite'
+
+    CreateFavoriteRequest:
+      type: object
+      required: [carId]
+      properties:
+        carId:
+          type: integer
+
+    UploadCarPhotosRequest:
+      type: object
+      required: [photos]
+      properties:
+        photos:
+          type: array
+          items:
+            type: string
+          description: Base64 encoded image strings
+
+    ToggleUserActiveRequest:
+      type: object
+      required: [active]
+      properties:
+        active:
+          type: boolean
+
+    # ──────────────────────────── Common ────────────────────────────
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+        details:
+          type: object
+
 paths:
-  /healthz:
-    get:
-      operationId: healthCheck
-      tags: [health]
-      summary: Health check
-      description: Returns server health status
+  # ──────────────────────────── Auth ────────────────────────────
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login (admin or seller)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
       responses:
-        "200":
-          description: Healthy
+        '200':
+          description: Login successful
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/HealthStatus"
-components:
-  schemas:
-    HealthStatus:
-      type: object
-      properties:
-        status:
-          type: string
-      required:
-        - status
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
+  /auth/refresh:
+    post:
+      operationId: refreshToken
+      tags: [auth]
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RefreshResponse'
+        '401':
+          description: Invalid refresh token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      security:
+        - bearerAuth: []
+      summary: Logout
+      responses:
+        '200':
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      security:
+        - bearerAuth: []
+      summary: Get current user
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /client/register:
+    post:
+      operationId: clientRegister
+      tags: [client]
+      summary: Register client account (mobile)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRegisterRequest'
+      responses:
+        '201':
+          description: Client registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /client/login:
+    post:
+      operationId: clientLogin
+      tags: [client]
+      summary: Client login (mobile)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  # ──────────────────────────── Cars ────────────────────────────
+  /cars:
+    get:
+      operationId: listCars
+      tags: [cars]
+      summary: List cars with filters and pagination
+      parameters:
+        - name: brand
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/CarStatus'
+        - name: fuel
+          in: query
+          schema:
+            $ref: '#/components/schemas/CarFuel'
+        - name: transmission
+          in: query
+          schema:
+            $ref: '#/components/schemas/CarTransmission'
+        - name: condition
+          in: query
+          schema:
+            $ref: '#/components/schemas/CarCondition'
+        - name: yearMin
+          in: query
+          schema:
+            type: integer
+        - name: yearMax
+          in: query
+          schema:
+            type: integer
+        - name: priceMin
+          in: query
+          schema:
+            type: number
+        - name: priceMax
+          in: query
+          schema:
+            type: number
+        - name: mileageMax
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sellerId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of cars
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarsListResponse'
+
+    post:
+      operationId: createCar
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Create a new car listing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCarRequest'
+      responses:
+        '201':
+          description: Car created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+
+  /cars/{id}:
+    get:
+      operationId: getCar
+      tags: [cars]
+      summary: Get car by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Car detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+        '404':
+          description: Car not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      operationId: updateCar
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Update car (admin or assigned seller)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarRequest'
+      responses:
+        '200':
+          description: Car updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+
+    delete:
+      operationId: deleteCar
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Delete car (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Car deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /cars/{id}/status:
+    patch:
+      operationId: updateCarStatus
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Update car status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarStatusRequest'
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+
+  /cars/{id}/price:
+    patch:
+      operationId: updateCarPrice
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Update car selling price (logs to price history)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCarPriceRequest'
+      responses:
+        '200':
+          description: Price updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+
+  /cars/{id}/photos:
+    post:
+      operationId: uploadCarPhotos
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Upload photos for a car (sends base64 encoded images)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadCarPhotosRequest'
+      responses:
+        '200':
+          description: Photos uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadPhotosResponse'
+
+  /cars/{id}/sell:
+    post:
+      operationId: markCarAsSold
+      tags: [cars]
+      security:
+        - bearerAuth: []
+      summary: Mark a car as sold (creates a sale record and computes profit)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Car marked as sold, sale record created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sale'
+
+  # ──────────────────────────── Price History ────────────────────────────
+  /price-history:
+    get:
+      operationId: listPriceHistory
+      tags: [priceHistory]
+      security:
+        - bearerAuth: []
+      summary: List all price changes (admin)
+      parameters:
+        - name: carId
+          in: query
+          schema:
+            type: integer
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Price history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceHistoryListResponse'
+
+  /price-history/{carId}:
+    get:
+      operationId: getCarPriceHistory
+      tags: [priceHistory]
+      security:
+        - bearerAuth: []
+      summary: Get price history for a specific car
+      parameters:
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Price history for car
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PriceHistoryListResponse'
+
+  # ──────────────────────────── Sales ────────────────────────────
+  /sales:
+    get:
+      operationId: listSales
+      tags: [sales]
+      security:
+        - bearerAuth: []
+      summary: List sales with optional period filter
+      parameters:
+        - name: period
+          in: query
+          schema:
+            $ref: '#/components/schemas/SalePeriod'
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: sellerId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Sales list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesListResponse'
+
+  /sales/stats:
+    get:
+      operationId: getSaleStats
+      tags: [sales]
+      security:
+        - bearerAuth: []
+      summary: Get sales statistics with chart data for a period
+      parameters:
+        - name: period
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SalePeriod'
+        - name: sellerId
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sale statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaleStats'
+
+  /sales/top-cars:
+    get:
+      operationId: getTopCars
+      tags: [sales]
+      security:
+        - bearerAuth: []
+      summary: Get top 5 best-selling cars for a period
+      parameters:
+        - name: period
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/SalePeriod'
+      responses:
+        '200':
+          description: Top cars
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [topCars]
+                properties:
+                  topCars:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TopCar'
+
+  /sales/seller-stats:
+    get:
+      operationId: getSellerStats
+      tags: [sales]
+      security:
+        - bearerAuth: []
+      summary: Get stats grouped by seller (admin only)
+      responses:
+        '200':
+          description: Seller statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [sellers]
+                properties:
+                  sellers:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SellerStats'
+
+  # ──────────────────────────── Dashboard ────────────────────────────
+  /dashboard/admin:
+    get:
+      operationId: getAdminDashboard
+      tags: [dashboard]
+      security:
+        - bearerAuth: []
+      summary: Admin dashboard summary
+      responses:
+        '200':
+          description: Admin dashboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminDashboard'
+
+  /dashboard/seller:
+    get:
+      operationId: getSellerDashboard
+      tags: [dashboard]
+      security:
+        - bearerAuth: []
+      summary: Seller dashboard summary
+      responses:
+        '200':
+          description: Seller dashboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SellerDashboard'
+
+  # ──────────────────────────── Users ────────────────────────────
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: List users (admin only)
+      parameters:
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/UserRole'
+        - name: active
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Users list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersListResponse'
+
+    post:
+      operationId: createUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: Create a new seller/admin account (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      operationId: getUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: Get user by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      operationId: updateUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: Update user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    delete:
+      operationId: deleteUser
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: Delete user (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  /users/{id}/active:
+    patch:
+      operationId: toggleUserActive
+      tags: [users]
+      security:
+        - bearerAuth: []
+      summary: Toggle user active status (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleUserActiveRequest'
+      responses:
+        '200':
+          description: Active status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  # ──────────────────────────── Favorites ────────────────────────────
+  /favorites:
+    get:
+      operationId: listFavorites
+      tags: [favorites]
+      security:
+        - bearerAuth: []
+      summary: Get current client's favorites
+      responses:
+        '200':
+          description: Favorites list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoritesListResponse'
+
+    post:
+      operationId: addFavorite
+      tags: [favorites]
+      security:
+        - bearerAuth: []
+      summary: Add car to favorites
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFavoriteRequest'
+      responses:
+        '201':
+          description: Added to favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+
+  /favorites/{carId}:
+    delete:
+      operationId: removeFavorite
+      tags: [favorites]
+      security:
+        - bearerAuth: []
+      summary: Remove car from favorites
+      parameters:
+        - name: carId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Removed from favorites
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+
+  # ──────────────────────────── Export ────────────────────────────
+  /export/excel:
+    get:
+      operationId: exportExcel
+      tags: [export]
+      security:
+        - bearerAuth: []
+      summary: Export full data as Excel (.xlsx) — admin only
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Excel file
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary

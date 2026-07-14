@@ -1,0 +1,80 @@
+# PROMPT REPLIT — Compléter Shawrome (Vérifications + Vendeur + Mobile)
+
+Avant de continuer sur le Seller Portal et l'app mobile, vérifie et complète d'abord ces points sur le Panneau Admin existant :
+
+## 1. Vérification du Dashboard — Profit/Perte
+
+Confirme que le dashboard calcule bien le **pourcentage de profit et de perte** sur les 4 périodes suivantes, avec un sélecteur pour basculer entre elles :
+- Aujourd'hui
+- Cette semaine
+- Ce mois
+- Cette année
+
+Le calcul doit être : `((prix_vente_final - prix_achat) / prix_achat) * 100`
+
+Si seulement une vue globale existe actuellement, ajoute un sélecteur de période (day/week/month/year) qui recalcule les stats dynamiquement.
+
+## 2. Top 5 des voitures les mieux vendues
+
+Ajoute (si absent) une section dédiée "Top 5 voitures" sur le dashboard, filtrable par période (jour/semaine/mois), classée par profit généré ou par nombre de ventes. Doit afficher : photo, nom du véhicule, prix de vente, profit réalisé.
+
+## 3. Export Excel professionnel
+
+Vérifie que l'export .xlsx contient bien :
+- Plusieurs feuilles séparées : **Ventes**, **Profit/Perte**, **Historique des prix**, **Stock actuel**
+- En-têtes stylés (fond coloré, gras)
+- Totaux calculés en bas de chaque feuille
+- Filtre par période appliqué avant export
+
+Si l'export actuel est un simple tableau brut, améliore-le avec ExcelJS pour respecter ce format.
+
+## 4. Sécurité — Mots de passe seedés
+
+Remplace les mots de passe de démo (`admin123`, `seller123`) par un système où l'admin peut changer son mot de passe depuis un écran "Paramètres du compte".
+
+---
+
+## 5. Seller Portal (nouvelle app — React + Vite)
+
+Crée une application web séparée à `/seller/`, connectée au **même backend et à la même base de données**, avec :
+
+- Connexion sécurisée (JWT, rôle `seller` uniquement)
+- Le vendeur ne voit et ne gère QUE **ses propres voitures** (filtrées par `vendeur_id`)
+- Ajouter / modifier une voiture (mêmes champs que l'admin)
+- Suppression de voiture **désactivée pour le vendeur** — seul l'admin peut supprimer (confirme cette règle ou demande-moi si besoin)
+- Changer le prix de vente → doit automatiquement créer une entrée dans `price_history` (réutiliser la logique déjà en place côté admin)
+- Marquer une voiture comme "vendue" → déclenche le calcul de profit et alimente les stats admin
+- Dashboard vendeur simplifié : ses ventes et son profit du jour/semaine/mois
+- Design professionnel sobre, cohérent avec le thème sombre déjà utilisé sur le panneau admin
+
+---
+
+## 6. Client Mobile App (nouvelle app — Expo / React Native)
+
+Crée l'application mobile à `/mobile/`, connectée au même backend (endpoints publics en lecture seule pour le catalogue), avec :
+
+### Design
+- Interface **ultra professionnelle** avec animations 3D dynamiques (rotation de voiture au tap, hero banner animé, transitions fluides entre écrans)
+- Thème sombre/clair cohérent avec l'identité visuelle du projet
+
+### Fonctionnalités
+- Écran d'accueil : liste des voitures disponibles (photo, marque, modèle, prix, année, kilométrage)
+- Filtres : marque, prix (min/max), année, kilométrage, carburant, transmission
+- Recherche par mot-clé
+- Fiche détaillée par voiture : galerie photos swipeable, toutes les infos, bouton contact (WhatsApp / appel direct)
+- Système de favoris (compte client léger : email ou téléphone, sans mot de passe si possible pour simplifier)
+- Écran favoris
+
+### Contraintes techniques
+- Ne pas dupliquer le schéma de base de données — réutiliser les tables `cars` et `favorites` déjà existantes
+- Endpoints clients en lecture seule uniquement (pas d'accès aux routes admin/vendeur)
+
+---
+
+## IMPORTANT — Ne pas casser l'existant
+
+- Ne pas modifier le schéma de base de données de manière incompatible avec les données déjà seedées
+- Réutiliser les hooks/endpoints déjà générés pour `cars`, `price_history`, `sales` plutôt que d'en recréer de nouveaux
+- Tester que le panneau admin fonctionne toujours après chaque étape avant de passer à la suivante
+
+Procède étape par étape : d'abord les vérifications/corrections du panneau admin (points 1 à 4), confirme-moi que tout fonctionne, **puis seulement après** passe au Seller Portal (point 5), et enfin à l'app mobile (point 6).

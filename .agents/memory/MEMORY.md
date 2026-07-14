@@ -1,0 +1,1 @@
+- [Shawrome project state](shawrome-state.md) — car dealership platform; backend + admin panel done; seller portal + mobile app next
