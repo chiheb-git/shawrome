@@ -1,5 +1,6 @@
-﻿import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Plus, Pencil, DollarSign, CheckCircle2, X, Link2, Image, Camera, Trash2 } from "lucide-react";
+import { apiUrl } from "../lib/api";
 
 interface Car {
   id: number;
@@ -68,9 +69,9 @@ export default function MesVoitures() {
 
   async function loadCars() {
     setLoading(true);
-    const meRes = await fetch("/api/auth/me", { headers: authHeaders() });
+    const meRes = await fetch(apiUrl("/api/auth/me"), { headers: authHeaders() });
     const me = await meRes.json();
-    const res = await fetch(`/api/cars?sellerId=${me.id}`, { headers: authHeaders() });
+    const res = await fetch(apiUrl(`/api/cars?sellerId=${me.id}`), { headers: authHeaders() });
     const data = await res.json();
     setCars(data.cars ?? []);
     setLoading(false);
@@ -146,7 +147,7 @@ export default function MesVoitures() {
       sellingPrice: Number(form.sellingPrice),
     };
 
-    const url = editingId ? `/api/cars/${editingId}` : "/api/cars";
+    const url = apiUrl(editingId ? `/api/cars/${editingId}` : "/api/cars");
     const method = editingId ? "PUT" : "POST";
 
     await fetch(url, {
@@ -163,7 +164,7 @@ export default function MesVoitures() {
     const price = Number(newPrice);
     if (!price || price <= 0) return;
 
-    await fetch(`/api/cars/${carId}/price`, {
+    await fetch(apiUrl(`/api/cars/${carId}/price`), {
       method: "PATCH",
       headers: authHeaders(),
       body: JSON.stringify({ sellingPrice: price }),
@@ -176,7 +177,7 @@ export default function MesVoitures() {
 
   async function handleMarkAsSold(carId: number) {
     if (!confirm("Confirmer la vente de cette voiture ?")) return;
-    await fetch(`/api/cars/${carId}/sell`, {
+    await fetch(apiUrl(`/api/cars/${carId}/sell`), {
       method: "POST",
       headers: authHeaders(),
     });

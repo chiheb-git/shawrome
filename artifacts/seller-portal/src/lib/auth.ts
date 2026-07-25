@@ -1,4 +1,5 @@
-﻿import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { apiUrl } from "./api";
 
 const TOKEN_KEY = "shawrome_seller_token";
 const REFRESH_KEY = "shawrome_seller_refresh";
@@ -35,7 +36,7 @@ export function initAuth(): void {
 }
 
 export async function login(email: string, password: string): Promise<SellerUser> {
-  const res = await fetch("/api/auth/login", {
+  const res = await fetch(apiUrl("/api/auth/login"), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
@@ -64,7 +65,7 @@ export async function getCurrentUser(): Promise<SellerUser | null> {
   const token = getToken();
   if (!token) return null;
 
-  const res = await fetch("/api/auth/me", {
+  const res = await fetch(apiUrl("/api/auth/me"), {
     headers: { Authorization: `Bearer ${token}` },
   });
 

@@ -1,4 +1,5 @@
-﻿import { useState } from "react";
+import { useState } from "react";
+import { apiUrl } from "../lib/api";
 
 export default function Parametres() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -22,7 +23,7 @@ export default function Parametres() {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/me/password", {
+      const res = await fetch(apiUrl("/api/auth/me/password"), {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
