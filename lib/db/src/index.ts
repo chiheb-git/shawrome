@@ -1,6 +1,12 @@
+import dns from "dns";
 import { drizzle } from "drizzle-orm/node-postgres";
 import pg from "pg";
 import * as schema from "./schema";
+
+// Force la resolution DNS a privilegier IPv4. Sur certains reseaux, la
+// resolution/connexion IPv6 traine plusieurs secondes avant d'echouer et de
+// retomber sur IPv4, ce qui cause des lenteurs et timeouts intermittents.
+dns.setDefaultResultOrder("ipv4first");
 
 const { Pool } = pg;
 
