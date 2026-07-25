@@ -3,7 +3,7 @@
     name: shawrome-api
     runtime: node
     rootDir: artifacts/api-server
-    buildCommand: cd ../.. && npm install -g pnpm && pnpm install && pnpm --filter @workspace/api-server build
+    buildCommand: cd ../.. && pnpm install && pnpm --filter @workspace/api-server build
     startCommand: node --enable-source-maps dist/index.mjs
     plan: free
     envVars:
@@ -15,4 +15,5 @@
         sync: false
       - key: PORT
         value: 10000
+
 
