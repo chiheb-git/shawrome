@@ -20,7 +20,13 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     }
 
     getMe()
-      .then(() => {
+      .then((user: any) => {
+        if (user.role !== "admin") {
+          localStorage.removeItem("shawrome_token");
+          setIsAuthenticated(false);
+          setLocation("/login");
+          return;
+        }
         setIsAuthenticated(true);
         if (location === "/login" || location === "/") {
           setLocation("/dashboard");

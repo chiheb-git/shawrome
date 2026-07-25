@@ -6,6 +6,7 @@ import {
   doublePrecision,
   timestamp,
   pgEnum,
+  index,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -49,7 +50,11 @@ export const carsTable = pgTable("cars", {
     .notNull(),
   soldAt: timestamp("sold_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index("cars_seller_id_idx").on(table.sellerId),
+  index("cars_status_idx").on(table.status),
+  index("cars_created_at_idx").on(table.createdAt),
+]);
 
 export const insertCarSchema = createInsertSchema(carsTable).omit({
   id: true,

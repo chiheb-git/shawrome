@@ -121,7 +121,7 @@ router.patch("/auth/me/password", requireAuth, async (req, res): Promise<void> =
     typeof currentPassword !== "string" || !currentPassword ||
     typeof newPassword !== "string" || newPassword.length < 6
   ) {
-    res.status(400).json({ error: "currentPassword et newPassword (min 6 caractères) requis" });
+    res.status(400).json({ error: "currentPassword et newPassword (min 6 caractأ¨res) requis" });
     return;
   }
 
@@ -148,7 +148,64 @@ router.patch("/auth/me/password", requireAuth, async (req, res): Promise<void> =
     .set({ passwordHash: newHash })
     .where(eq(usersTable.id, user.id));
 
-  res.json({ message: "Mot de passe modifié avec succès" });
+  res.json({ message: "Mot de passe modifiأ© avec succأ¨s" });
+});
+
+router.post("/auth/client-login", async (req, res): Promise<void> => {
+  const { name, email, phone } = req.body as Record<string, unknown>;
+
+  if (typeof email !== "string" || !email.includes("@")) {
+    res.status(400).json({ error: "Email valide requis" });
+    return;
+  }
+
+  let [user] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email))
+    .limit(1);
+
+  if (!user) {
+    const randomPassword = Math.random().toString(36).slice(2) + Date.now();
+    const passwordHash = await bcrypt.hash(randomPassword, 10);
+
+    [user] = await db
+      .insert(usersTable)
+      .values({
+        name: typeof name === "string" && name ? name : email.split("@")[0],
+        email,
+        passwordHash,
+        phone: typeof phone === "string" ? phone : null,
+        role: "client",
+        active: true,
+      })
+      .returning();
+  }
+
+  if (user.role !== "client") {
+    res.status(403).json({ error: "Cet email est deja utilise par un autre type de compte" });
+    return;
+  }
+
+  const payload = { id: user.id, email: user.email, role: user.role };
+  const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload);
+
+  res.json(
+    LoginResponse.parse({
+      accessToken,
+      refreshToken,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        active: user.active,
+        createdAt: user.createdAt,
+      },
+    }),
+  );
 });
 
 export default router;

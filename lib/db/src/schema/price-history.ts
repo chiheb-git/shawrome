@@ -4,6 +4,7 @@ import {
   integer,
   doublePrecision,
   timestamp,
+  index,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -21,7 +22,9 @@ export const priceHistoryTable = pgTable("price_history", {
     .references(() => usersTable.id)
     .notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [
+  index("price_history_car_id_idx").on(table.carId),
+]);
 
 export const insertPriceHistorySchema = createInsertSchema(priceHistoryTable).omit({
   id: true,
