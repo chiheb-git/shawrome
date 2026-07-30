@@ -1,4 +1,4 @@
-﻿{
+{
   "expo": {
     "name": "Shawrome",
     "slug": "mobile-client",
@@ -21,7 +21,8 @@
         "backgroundColor": "#0a0a0f"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.shawrome.mobileclient"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +30,12 @@
     "plugins": [
       "expo-router",
       "expo-video"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "15be17d9-fbf8-4a05-8cd8-46b33a403d09"
+      }
+    }
   }
 }

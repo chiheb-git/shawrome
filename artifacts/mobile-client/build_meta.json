@@ -1,0 +1,48 @@
+﻿{
+  "id": "da1b5d64-5da1-41b2-ab0b-a46a846fa8b4",
+  "status": "ERRORED",
+  "platform": "ANDROID",
+  "error": {
+    "errorCode": "UNKNOWN_ERROR",
+    "message": "Unknown error. See logs of the Install dependencies build phase for more information."
+  },
+  "artifacts": {},
+  "fingerprint": {
+    "id": "019fafe4-5e16-7c0e-a455-da202087ac87",
+    "hash": "413edcd57bca87fef951d8dc178e2da6ec33d9c3"
+  },
+  "initiatingActor": {
+    "id": "8f2baeba-9bc3-4070-9aa6-cdfa221a9c47",
+    "displayName": "app_suc"
+  },
+  "logFiles": [
+    "https://storage.googleapis.com/eas-workflows-production/logs/15be17d9-fbf8-4a05-8cd8-46b33a403d09/da1b5d64-5da1-41b2-ab0b-a46a846fa8b4/2026-07-29T22%3A22%3A05Z-098f26ab-24ec-4840-a5ee-8d5be0b2a0ab.txt?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=www-production%40exponentjs.iam.gserviceaccount.com%2F20260729%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20260729T231320Z&X-Goog-Expires=900&X-Goog-SignedHeaders=host&X-Goog-Signature=2d1e4c7f61357ddbb284bfba8c47baa917bfb91faca941490831c4a9988a4f3263d449554c43dd1a49da5ebbf1d6277fc08d4eee0693e72dd791c7d25216e444133fe0d97ee0fc588214fb00bde89e3398b51009999e37545b375d65567818d8b778f895f35a482d2e0589d553d393ed3741e356692e1c986c3f7014c753b50eca4e6c524c13d3e53a0f52be0f5e071c792bc521e5e9b1e0fbc44ecfa39e2134f3138628a6661bf0d23c75b06d315ec749edbad19997b6f0dac81dded4a82f270abec055f0c2def83555aa76b1b10788024a4c73b494f1d62f3af43ab6d3f3e7c44658b2d957380640d8954e96a4d8bf07de97fe0f84fc403b57e85b2f71c267"
+  ],
+  "project": {
+    "id": "15be17d9-fbf8-4a05-8cd8-46b33a403d09",
+    "name": "mobile-client",
+    "slug": "mobile-client",
+    "ownerAccount": {
+      "id": "8ef00b4e-d271-4e90-8c02-76da88990c8e",
+      "name": "app_suc"
+    }
+  },
+  "distribution": "INTERNAL",
+  "buildProfile": "preview",
+  "sdkVersion": "54.0.0",
+  "appVersion": "1.0.0",
+  "appBuildVersion": "1",
+  "gitCommitHash": "d0662a3f4445ab5ba9975335f27c7f66f2963373",
+  "gitCommitMessage": "Corrige token Cloudflare pour seller-portal",
+  "priority": "NORMAL",
+  "createdAt": "2026-07-29T22:00:06.890Z",
+  "updatedAt": "2026-07-29T22:22:18.043Z",
+  "completedAt": "2026-07-29T22:22:17.879Z",
+  "expirationDate": "2026-08-12T22:00:06.925Z",
+  "isForIosSimulator": false,
+  "metrics": {
+    "buildWaitTime": 4280,
+    "buildQueueTime": 1318913,
+    "buildDuration": 7796
+  }
+}
