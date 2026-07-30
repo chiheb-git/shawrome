@@ -246,6 +246,7 @@ router.put("/cars/:id", requireSellerOrAdmin, async (req, res): Promise<void> =>
   if (d.color !== undefined) updateData.color = d.color;
   if (d.condition !== undefined) updateData.condition = d.condition as "neuf" | "occasion";
   if (d.sellerId !== undefined && req.user!.role === "admin") updateData.sellerId = d.sellerId;
+  if (d.photos !== undefined) updateData.photos = d.photos;
 
   const [car] = await db
     .update(carsTable)

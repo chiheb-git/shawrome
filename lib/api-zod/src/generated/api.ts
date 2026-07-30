@@ -252,7 +252,8 @@ export const UpdateCarBody = zod.object({
   "transmission": zod.enum(['manuelle', 'automatique']).optional(),
   "color": zod.string().optional(),
   "condition": zod.enum(['neuf', 'occasion']).optional(),
-  "sellerId": zod.number().optional()
+  "sellerId": zod.number().optional(),
+  "photos": zod.array(zod.string()).optional()
 })
 
 export const UpdateCarResponse = zod.object({
