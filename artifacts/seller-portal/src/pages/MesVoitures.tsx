@@ -145,6 +145,9 @@ export default function MesVoitures() {
       mileage: Number(form.mileage),
       purchasePrice: Number(form.purchasePrice),
       sellingPrice: Number(form.sellingPrice),
+      fuel: form.fuel.toLowerCase(),
+      transmission: form.transmission.toLowerCase(),
+      condition: form.condition.toLowerCase(),
     };
 
     const url = apiUrl(editingId ? `/api/cars/${editingId}` : "/api/cars");
