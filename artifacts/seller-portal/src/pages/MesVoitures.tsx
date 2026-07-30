@@ -150,12 +150,17 @@ export default function MesVoitures() {
     const url = apiUrl(editingId ? `/api/cars/${editingId}` : "/api/cars");
     const method = editingId ? "PUT" : "POST";
 
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: authHeaders(),
       body: JSON.stringify(payload),
     });
-
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "");
+      console.error("Erreur sauvegarde voiture:", res.status, errText);
+      alert(`Erreur (${res.status}) lors de la sauvegarde. Voir la console.`);
+      return;
+    }
     setShowForm(false);
     loadCars();
   }
