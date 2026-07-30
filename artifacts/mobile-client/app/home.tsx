@@ -153,6 +153,7 @@ export default function Home() {
     try {
       const qs = new URLSearchParams();
       qs.set("status", "available");
+      qs.set("limit", "1000");
       if (query) qs.set("search", query);
       if (brand) qs.set("brand", brand);
       if (fuel) qs.set("fuel", fuel);
