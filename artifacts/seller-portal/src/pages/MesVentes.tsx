@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Period = "day" | "week" | "month" | "year";
 
@@ -27,7 +27,7 @@ export default function MesVentes() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/sales?period=${period}`, { headers: authHeaders() })
+    fetch(apiUrl(`/api/sales?period=${period}`), { headers: authHeaders() })
       .then((r) => r.json())
       .then((data) => setSales(data.sales ?? []))
       .finally(() => setLoading(false));
@@ -37,7 +37,7 @@ export default function MesVentes() {
     { value: "day", label: "Aujourd'hui" },
     { value: "week", label: "Semaine" },
     { value: "month", label: "Mois" },
-    { value: "year", label: "AnnÃ©e" },
+    { value: "year", label: "Année" },
   ];
 
   const totalProfit = sales.reduce((sum, s) => sum + s.profit, 0);
@@ -64,7 +64,7 @@ export default function MesVentes() {
       </div>
 
       <div className="mb-4 rounded-xl border border-white/10 bg-white/5 p-4">
-        <p className="text-sm text-gray-400">Profit total sur la pÃ©riode</p>
+        <p className="text-sm text-gray-400">Profit total sur la période</p>
         <p
           className={`text-xl font-bold ${
             totalProfit >= 0 ? "text-green-400" : "text-red-400"
@@ -78,7 +78,7 @@ export default function MesVentes() {
       {loading ? (
         <p className="text-gray-400">Chargement...</p>
       ) : sales.length === 0 ? (
-        <p className="text-gray-400">Aucune vente sur cette pÃ©riode.</p>
+        <p className="text-gray-400">Aucune vente sur cette période.</p>
       ) : (
         <div className="overflow-hidden rounded-xl border border-white/10">
           <table className="w-full text-sm">

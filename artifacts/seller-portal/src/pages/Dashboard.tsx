@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { TrendingUp, TrendingDown, Car, DollarSign } from "lucide-react";
 
@@ -19,7 +19,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/sales/stats?period=${period}`, {
+    fetch(apiUrl(`/api/sales/stats?period=${period}`), {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("shawrome_seller_token")}`,
       },
@@ -33,7 +33,7 @@ export default function Dashboard() {
     { value: "day", label: "Aujourd'hui" },
     { value: "week", label: "Semaine" },
     { value: "month", label: "Mois" },
-    { value: "year", label: "Année" },
+    { value: "year", label: "Ann�e" },
   ];
 
   return (
@@ -102,7 +102,7 @@ export default function Dashboard() {
 
           <div className="rounded-xl border border-white/10 bg-white/5 p-5">
             <h3 className="mb-4 text-sm font-medium text-gray-300">
-              Évolution du profit
+              Evolution du profit
             </h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={stats.chartData}>
