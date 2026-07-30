@@ -71,7 +71,7 @@ export default function MesVoitures() {
     setLoading(true);
     const meRes = await fetch(apiUrl("/api/auth/me"), { headers: authHeaders() });
     const me = await meRes.json();
-    const res = await fetch(apiUrl(`/api/cars?sellerId=${me.id}`), { headers: authHeaders() });
+    const res = await fetch(apiUrl(`/api/cars?sellerId=${me.id}&limit=1000`), { headers: authHeaders() });
     const data = await res.json();
     setCars(data.cars ?? []);
     setLoading(false);
