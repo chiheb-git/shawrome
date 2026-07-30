@@ -25,7 +25,7 @@ export default function CarsList() {
     status: status !== "all" ? status as CarStatus : undefined,
     fuel: fuel !== "all" ? fuel as CarFuel : undefined,
     page,
-    limit: 20
+    limit: 1000
   });
 
   const deleteCar = useDeleteCar();
