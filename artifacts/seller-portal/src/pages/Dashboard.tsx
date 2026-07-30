@@ -1,3 +1,4 @@
+import { apiUrl } from "../lib/api";
 import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { TrendingUp, TrendingDown, Car, DollarSign } from "lucide-react";

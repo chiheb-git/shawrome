@@ -1,3 +1,4 @@
+import { apiUrl } from "../lib/api";
 import { useEffect, useState } from "react";
 
 type Period = "day" | "week" | "month" | "year";
